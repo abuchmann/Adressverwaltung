@@ -83,20 +83,7 @@ void addAddressToList(address_t* addressToAdd)
         addressList->addr = (address_t*) realloc(addressList->addr,(addressList->size + 1) * sizeof(address_t));                
     }
     /* Neu erstellter Speicherplatz mit Daten füllen */
-    printf("Pointer1: %p\n\n", &addressList->addr[addressList->size]);
     
-    /*static int i=0;
-    address_t newAddress;
-    strcpy(newAddress.firstname, "Adrian");
-    strcpy(newAddress.lastname,"Buchmann");
-    strcpy(newAddress.street,"Street");
-    newAddress.zip = 6000+ i;
-    strcpy(newAddress.city,"Luzern");
-    newAddress.index = i+1;
-    i++;
-     * */
-    
-    /*?????*/
     addressList->addr[addressList->size] = *addressToAdd;
     
     addressList->size++;
@@ -112,44 +99,7 @@ void initializeAddressList()
     addressList->addr = NULL;   
 }       
 
-void showAddAddressMenu()
-{       
-    address_t newAddress;
-    static int i = 0;
-    /*system("clear");
-    printf("Name:          ");
-    scanf("%s",newAddress->lastname);
-    printf("Vorname:       ");
-    scanf("%s",newAddress->firstname);
-    printf("Strasse:       ");
-    scanf("%s",newAddress->street);
-    printf("Postleitzahl:  ");
-    scanf("%i",&newAddress->zip);
-    printf("Wohnort:       ");
-    scanf("%s",newAddress->city);
-    */
-   /* strcpy(newAddress.firstname, "Adrian");
-    strcpy(newAddress.lastname,"Buchmann");
-    strcpy(newAddress.street,"Street");
-    newAddress.zip = 6000 + i;
-    strcpy(newAddress.city,"Luzern");
-    newAddress.index = i+1;*/
-    strcpy(newAddress.firstname, "Adrian");
-    strcpy(newAddress.lastname, "Buchmann");
-    strcpy(newAddress.street, "Sempacherstrasse 22");
-    newAddress.zip = 6000+i;
-    newAddress.index = i+1;
-    strcpy(newAddress.city, "Luzern");
-    
-    //Add newly created Address to the list
-    addAddressToList(&newAddress);
-    
-    i++;
-    printf("i: %i\n",i);
-    //currentAddress = &newAddress;
-    //printf("\n\n%s\n",newAddress->lastname);
-    
-}
+
 
 void listAddresses(void)
 {
@@ -158,8 +108,7 @@ void listAddresses(void)
     for(i=0;i<(addressList->size);i++)
     {
        printf("=====================\n"); 
-       printf("%i\n%s %s\n%s\n%4i %s\n",
-               addressList->addr[i].index, 
+       printf("%s %s\n%s\n%4i %s\n",
                addressList->addr[i].firstname, 
                addressList->addr[i].lastname,
                addressList->addr[i].street,
@@ -170,123 +119,5 @@ void listAddresses(void)
 }
 
 
-void showSaveToFileMenu(void)
-{
-    char filename[MAXSTRINGLENGTH];
-    system("clear");
-    printf("Bitte geben Sie den Dateinamen an:\n");
-    scanf("%s",filename);
-    FILE *fp;
-    fp = fopen(filename, "w+");
-    int i;
-    for(i = 0; i<addressList->size; i++)
-    {
-        fprintf(fp,"%i;%s;%s;%s;%i;%s\n",
-                addressList->addr[i].index,
-                addressList->addr[i].firstname,
-                addressList->addr[i].lastname,
-                addressList->addr[i].street,
-                addressList->addr[i].zip,
-                addressList->addr[i].city
-                );
-    }
-    fclose(fp);
-            
-    
-}
-
-void showFileOpenMenu(void)
-{
-    char filename[MAXSTRINGLENGTH];
-    int r;
-    
-    system("clear");
-    printf("Bitte geben Sie den Dateinamen an:\n");
-    scanf("%s",filename);
-    FILE *fp;
-    fp = fopen(filename, "r");
-    address_t tempAddr;
-    /*r = fscanf(fp,"%i;%s;%s;%s;%i;%s\n",
-            &tempAddr.index,
-            tempAddr.firstname,
-            tempAddr.lastname,
-            tempAddr.street,
-            &tempAddr.zip,
-            tempAddr.city);*/
-    
-    while ((r = fscanf(fp,"%i;%[^;];%[^;];%[^;];%i;%s\n",
-            &tempAddr.index,
-            tempAddr.firstname,
-            tempAddr.lastname,
-            tempAddr.street,
-            &tempAddr.zip,
-            tempAddr.city))
-             != EOF)
-    {
-        addAddressToList(&tempAddr);
-    }
-    fclose(fp);
-}
-
-void sortAddressList(sortmode mode)
-{
-    //Nach Namen sortieren 
-    int i; // temp counter, used for stable sort
-    
-    // qsort(Beginning address of array, Number of elements, Size of each element, Pointer to compare function
-    switch (mode) {
-        case NAME:
-            qsort(addressList->addr,addressList->size, sizeof(address_t), (compfn)compareByName);
-            break;
-        case STREET:
-            qsort(addressList->addr,addressList->size, sizeof(address_t), (compfn)compareByStreet);
-            break;
-        case CITY:
-            qsort(addressList->addr,addressList->size, sizeof(address_t), (compfn)compareByCity);
-            break;
-    
-    }
-}
-
-int compareByIndex(const void* a,const void* b)
-{
-    address_t *A = (address_t*) a;
-    address_t *B = (address_t*) b;
-    return A->index - B->index;
-}
-
-int compareByName(const void* a,const void* b)
-{
-    address_t *A = (address_t*) a;
-    address_t *B = (address_t*) b;
-    
-    
-    char name1[2*MAXSTRINGLENGTH + 1]; 
-    char name2[2*MAXSTRINGLENGTH + 1]; 
-    
-     // Copy Lastname and Firstname into one String
-    strcpy(name1, A->lastname);
-    strcat(name1, A->firstname);
-    strcpy(name2, B->lastname);
-    strcat(name2, B->firstname);
-
-    return strcmp(name1,name2);
-}
-
-int compareByStreet(const void* a,const void* b)
-{
-    address_t *A = (address_t*) a;
-    address_t *B = (address_t*) b;
-    
-    return strcmp(A->street,B->street);
-}
-
-int compareByCity(const void* a,const void* b)
-{
-    address_t *A = (address_t*) a;
-    address_t *B = (address_t*) b;
-    
-    return strcmp(A->city,B->city);
-}
 
 
